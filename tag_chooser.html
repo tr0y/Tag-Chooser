@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Untitled Document</title>
+	</head>
+	<body>
+		
+		<form method="post" action="">
+			<p><label>tags</label></p>
+	
+			<p id="current_entries">
+				<?php echo $current_tags; ?>
+			</p>
+			
+			<p id="add_new_entry">
+				<input type="text" name="add_tag" id="add_tag" autocomplete="off"/><button id="add_this_tag">add</button>
+			</p>
+			
+			<ul id="content_tag_wrap" class="tag_wrap">
+				<?php echo tag_results; ?>
+			</div>
+			
+			<input type="hidden" name="tag_input" id="tag_input">
+		</form>
+		
+	</body>
+</html>
