@@ -1,0 +1,100 @@
+var chooseTagList = new Class({
+    Extends: LiveListSearch,
+	getCurrentText: function(currentTagEl){	
+		this.currentLiveSearch = currentTagEl.getElement('.tag_text').getProperty('text');
+	}
+});
+
+searchTags = new chooseTagList({
+	'inputID'  : 'add_tag',                        
+	'listID'   : 'content_tag_wrap',                         
+	'choiceID' : 'current_entries',             
+	'onEnter'  : function(e, tag){
+		setTagResults(tag, 'enter');
+	},
+	'onClick'  : function(e, tag){	
+		setTagResults(tag);
+		setTagInput();
+	},
+	'onKeydown'  : function(e, tag){		
+		if(e.key == 'space' || e.key == '.'){
+			e.preventDefault();
+		}
+	},
+	'onNewenter'  : function(e, tag){	
+		setTagInput();
+		setTagResults(tag);
+		searchTags.resetInput();
+		searchTags.filterList();
+	}
+});
+
+function makeTagEl(tag){
+	tag = tag.stripScripts().trim();
+	tag = tag.replace(/\s+/g,"_");
+	
+	return newTag = new Element('span', {
+		'class': 'added_tag',
+		'html': '<a href="#">' + tag + '</a>',
+		'title' : 'click to remove',
+		'events': {
+			'click': function(e){
+				e.preventDefault();
+				e.target.getParent('p').highlight('#FA8072');
+				searchTags.resetInput();
+				this.destroy();
+				setTagInput();
+			}
+		}
+	});
+}
+
+if($$('.added_tag')){
+	$$('.added_tag').addEvent('click', function(e){
+		e.preventDefault();
+		e.target.getParent('p').highlight('#FA8072');
+		searchTags.resetInput();
+		this.destroy();
+		setTagInput();
+	});
+}
+
+function setTagResults(tag,eventType){
+	newTag = makeTagEl(tag);
+	
+	var currentTagsText = $('current_entries').getElements('span a').getProperty('text');
+	
+	if(!currentTagsText.contains(tag)){
+		newTag.inject($('current_entries'), 'bottom');	
+	}
+	
+	
+	if($('content_tag_wrap').getElement('.LLS_current_selection')){
+		$('content_tag_wrap').getElement('.LLS_current_selection').removeClass('LLS_current_selection');		
+	}
+
+	searchTags.filterList(); 
+	searchTags.resetInput();
+}
+
+$('add_this_tag').addEvent('click', function(e){
+	e.preventDefault();
+	var newTag = $('add_tag').getProperty('value');	
+	searchTags.resetInput();
+	setTagResults(newTag);
+	setTagInput();
+});
+
+var tag_input_string = '';
+
+function setTagInput(){
+	//alert('fooo');
+	
+	tag_input_string = '';
+	
+	$$('.added_tag').each(function(el){
+		tag_input_string += el.getProperty('text') + ',';
+	});
+	
+	$('tag_input').setProperty('value', tag_input_string);
+}
