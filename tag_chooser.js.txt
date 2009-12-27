@@ -6,7 +6,7 @@
 */
 
 
-var LiveListSearch = new Class ({
+var LLSearch = new Class ({
 	Implements: [Options, Events],
 	options: {
 		inputID: '', // the id of the live search input field
