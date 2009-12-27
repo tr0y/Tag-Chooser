@@ -1,16 +1,10 @@
-/* Live List Search for Mootools 1.2
+/* consider open Tag Chooser for Mootools 1.2
  * v0.5
  * Dedicated to public domain 
  * troy@consideropen.com
  * www.consideropen.com/blog
 */
 
-/* Usage:
- * 
- * 
- * 
- * 
-*/
 
 var LiveListSearch = new Class ({
 	Implements: [Options, Events],
@@ -58,19 +52,20 @@ var LiveListSearch = new Class ({
 				}
 
 				e.target.getParent('.' + this.options.inResultsClass).addClass(this.options.currentSelection);
-				this.getCurrentText();
+				
+				var currentTagEl = e.target.getParent('.' + this.options.inResultsClass);
+				this.getCurrentText(currentTagEl);
+				
 				this.fireEvent('click', [e, this.currentLiveSearch]);
-				this.resetInput();
-				//this.hightlightSelected();
 			}.bind(this));	
 		}
 	},
-	clearList: function(){
+	clearList: function(el){
 		this.searchEl.removeClass(this.options.inResultsClass);	
 	},
-	getCurrentText: function(){	
-		this.currentLiveSearch = $(this.options.listID).getElement('.' + this.options.currentSelection).getProperty('text');
-	},
+	getCurrentText: function(el){	
+		this.currentLiveSearch = el.get('text');
+	}, 
 	
 	getInputValue: function(){
 		this.searchEvents.currentText = this.inputName.get('value').toLowerCase();
@@ -85,19 +80,25 @@ var LiveListSearch = new Class ({
 			else {
 				this.searchEvents.currentWord = el.get('text').toLowerCase();
 			}
+			
 			if(this.searchEvents.currentWord.contains(this.searchEvents.currentText)) {
+				
 				if (this.options.listType == 'tr') {
 					el.setStyle('display', 'table-row').addClass(this.options.inResultsClass);
 				}
 				else {
 					el.setStyle('display', 'block').addClass(this.options.inResultsClass);	
 				}
+				
 				this.inList = $$('.' + this.options.inResultsClass); 
-			}
-			else {
+				
+			} else {
 				el.setStyle('display', 'none').removeClass(this.options.inResultsClass);
+				
 				this.inList = $$('.' + this.options.inResultsClass);
 			}
+			
+			this.fireEvent('filter');
 		}.bind(this));	
 	},
 	
@@ -138,16 +139,13 @@ var LiveListSearch = new Class ({
 					this.cursorInList = this.inList.filter('.' + this.options.currentSelection);
 					if(this.cursorInList != 0){
 						e.preventDefault();
-						this.getCurrentText();
+						this.getCurrentText($(this.options.listID).getElement('.' + this.options.currentSelection));
 						this.fireEvent('enter', [e, this.currentLiveSearch]);
-						//this.hightlightSelected();
-						this.resetInput();
 					} else {
 						this.getInputValue();
 						this.fireEvent('newenter', [e, this.searchEvents.currentText]);
-						this.resetInput();
 					}
-				}
+				} 
 			}.bind(this)
 		});
 	},
@@ -166,8 +164,6 @@ var LiveListSearch = new Class ({
 		}
 
 		this.currentListItem = -1;	
-		
-		$$('.' + this.options.currentSelection).removeClass(this.options.currentSelection);
 	},
 	
 	scrollOnArrows: function() {
@@ -175,11 +171,3 @@ var LiveListSearch = new Class ({
 		$(this.options.listID).scrollTo(0, this.currentPOS.y);
 	}
 });
-
-
-/* Known Bugs:
- * 
- * 
- * 
- * 
-*/
